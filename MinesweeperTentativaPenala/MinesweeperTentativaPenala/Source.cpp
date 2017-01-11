@@ -18,7 +18,7 @@ int nrMaximBombe = 200;
 int contorAfisate;
 
 int size_x = 30;
-int size_y = 30;
+int size_y = 16;
 int start_x = (36 - size_x) / 2;
 int final_x = start_x + size_x - 1;
 int start_y = (36 - size_y) / 2;
@@ -72,7 +72,7 @@ void BFS(int a, int b)
 	}
 }
 
-
+bool ispressed = false;
 int main()
 {
 	cout << start_x << " " << final_x << " "<<start_y << " " << final_y;
@@ -85,10 +85,11 @@ int main()
 		BestTime
 	};
 
-	FazaJoc faza = Game;
+	FazaJoc faza = Menu;
 	//stii care e faza?:)
 
-	Image icon;
+
+    Image icon;
 	icon.loadFromFile("icon.png");
 	icon.createMaskFromColor(Color::White);
 
@@ -98,7 +99,7 @@ int main()
 	joc.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
 
 	Music muzica;
-	muzica.openFromFile("GetLucky.ogg");
+	muzica.openFromFile("TurnDownForWhat2.ogg");
 	muzica.play();
 	muzica.setLoop(true);
 
@@ -142,14 +143,88 @@ int main()
 	t.loadFromFile("images/tiles.jpg");
 	Sprite s(t);
 
+	Texture titlu;
+	titlu.loadFromFile("images/title.png");
+	Sprite stitlu;
+	stitlu.setTexture(titlu);	
+	stitlu.setPosition(195, 100);
+
+	Texture tplay, tplay1;
+	tplay.loadFromFile("play.png");
+	tplay1.loadFromFile("play1.png");
+	Sprite splay;
+	splay.setTexture(tplay);
+	splay.setPosition(415, 460);
+
+	Texture background;
+	background.loadFromFile("images/background.jpg");
+	Sprite sbackground;
+	sbackground.setTexture(background);
+	sbackground.setPosition(0, 0);
+
+	Texture mina;
+	mina.loadFromFile("icon.png");
+	Sprite smina;
+	smina.setTexture(mina);
+	smina.setPosition(340,460);
+	smina.setScale(0.25, 0.25);
+
 
 	std::cout << "Nr. steaguri:" << nrSteaguri << endl;
 	while (joc.isOpen())
 	{
+		faza = Menu;
+		while (faza == Menu)
+		{
+			joc.clear();
+			joc.draw(sbackground);
+			joc.draw(stitlu);
+			joc.draw(splay);
+			Vector2i pozitie = Mouse::getPosition(joc);
+			
+			if (splay.getGlobalBounds().contains(pozitie.x, pozitie.y)) 
+			{
+				
+				joc.draw(smina);
+			}
+			joc.display();
+			sf::Event e;
+			while (joc.pollEvent(e))
+			{
+				
+
+				if (e.type == sf::Event::Closed)
+				{
+					joc.close();
+					muzica.stop();
+				}
+				
+
+				if (e.type == sf::Event::MouseButtonPressed)
+					if (e.key.code == Mouse::Left)
+						if (splay.getGlobalBounds().contains(pozitie.x, pozitie.y)) {
+							ispressed = true;
+							splay.setTexture(tplay1);
+						}
+				if (e.type == sf::Event::MouseButtonReleased)
+					if (e.key.code == Mouse::Left)
+						if (ispressed)
+						{
+							ispressed = false;
+							splay.setTexture(tplay);
+							faza = Game;
+			}
+			}
+
+        }
+		
+		
+
 		while (faza == Game)
 
 		{   
-			
+			muzica.setVolume(50);
+
 			Vector2i pozitie = Mouse::getPosition(joc);
 			int x = pozitie.x / pixel;
 			int y = pozitie.y / pixel;
@@ -184,7 +259,9 @@ int main()
 								for (int j = start_y; j <= final_y; j++)
 								if (matrice[i][j] != 9 || afisare[i][j] != 11)
 									afisare[i][j] = matrice[i][j];
+							
 							//joc.close(); 
+							//faza = GameOver;
 						}
 						std::cout << x - 2 << " " << y - 2 <<" "<<pozitieValida(x,y)<<endl;
 						if (matrice[x][y] == 0 && pozitieValida(x, y))  BFS(x, y);
