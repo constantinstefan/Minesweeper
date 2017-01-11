@@ -15,11 +15,20 @@ int nrSteaguri = 0;
 int coada_x[1000];
 int coada_y[1000];
 int nrMaximBombe = 200;
+int contorAfisate;
 
-bool pozitieValida(int a,int b)
+int size_x = 30;
+int size_y = 30;
+int start_x = (36 - size_x) / 2;
+int final_x = start_x + size_x - 1;
+int start_y = (36 - size_y) / 2;
+int final_y = start_y + size_y - 1;
+bool won;
+
+bool pozitieValida(int a, int b)
 {
-	if(a<3||b<3||a>32||b>32)
-	return 0;
+	if (a<start_x || b<start_y || a>final_x || b>final_y)
+		return 0;
 
 	return 1;
 }
@@ -39,64 +48,69 @@ void BFS(int a, int b)
 
 		vizitat[coada_x[prim]][coada_y[prim]] = 1;
 		for (int i = 0; i < 8; i++)
-	    {
+		{
 			if (pozitieValida(coada_x[prim] + deplasare_x[i], coada_y[prim] + deplasare_y[i]))
 			{
-				
+
 				afisare[vecin] = matrice[vecin];
 
 				if (matrice[vecin] != 0)
 					vizitat[vecin] = 1;
 
-				if (matrice[vecin] == 0 && vizitat[vecin]==0)
+				if (matrice[vecin] == 0 && vizitat[vecin] == 0)
 				{
 					++ultim;
 					coada_x[ultim] = coada_x[prim] + deplasare_x[i];
 					coada_y[ultim] = coada_y[prim] + deplasare_y[i];
 					//std::cout << "ultim:" << coada_x[ultim] - 2 << " " << coada_y[ultim] - 2 << " " << vizitat[coada_x[ultim]][coada_y[ultim]] << endl;
+				}
+
 			}
 
 		}
-
-	}
 		++prim;
-  }
+	}
 }
 
-	
-	int main()
-{   
-		enum FazaJoc 
-		{
-			Menu,
-		    Options,
-            Game,
-			GameOver,
-			BestTime
-         };
 
-		FazaJoc faza = Game;
-//stii care e faza?:)
+int main()
+{
+	cout << start_x << " " << final_x << " "<<start_y << " " << final_y;
+	enum FazaJoc
+	{
+		Menu,
+		Options,
+		Game,
+		GameOver,
+		BestTime
+	};
 
-    Image icon;
+	FazaJoc faza = Game;
+	//stii care e faza?:)
+
+	Image icon;
 	icon.loadFromFile("icon.png");
 	icon.createMaskFromColor(Color::White);
 
 	std::srand(time(0));
 
-	sf::RenderWindow joc(sf::VideoMode(1200, 1200), "Minesweeper");
-	joc.setIcon(icon.getSize().x,icon.getSize().y,icon.getPixelsPtr());
+	sf::RenderWindow joc(sf::VideoMode(1156, 1156), "Minesweeper");
+	joc.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
 
-   Music muzica;
-   muzica.openFromFile("GetLucky.ogg");
-   muzica.play();
-   muzica.setLoop(true);
+	Music muzica;
+	muzica.openFromFile("GetLucky.ogg");
+	muzica.play();
+	muzica.setLoop(true);
 
-	for (int i = 3; i <= 32; i++)
-		for (int j = 3; j <= 32; j++)
-		{    
+	Music explozie;
+	explozie.openFromFile("exploding.ogg");
+
+
+	for (int i = start_x; i <= final_x; i++)
+		for (int j = start_y; j <= final_y; j++)
+		{
 			afisare[i][j] = 10;
-			
+
 			if (rand() % 5 == 0 && nrMaximBombe>0)
 			{
 				matrice[i][j] = 9;
@@ -104,23 +118,23 @@ void BFS(int a, int b)
 				--nrMaximBombe;
 			}
 			else matrice[i][j] = 0;
-        }
+		}
 
-	for(int i=3;i<=32;i++)
-		for (int j = 3; j <= 32; j++)
-		{   
+	for (int i = start_x; i <= final_x; i++)
+		for (int j = start_y; j <= final_y; j++)
+		{
 			contor = 0;
-			if (matrice[i-1][j-1] == 9) contor++;
-			if (matrice[i-1][j] == 9) contor++;
-			if (matrice[i-1][j+1] == 9) contor++;
-			if (matrice[i][j-1] == 9) contor++;
+			if (matrice[i - 1][j - 1] == 9) contor++;
+			if (matrice[i - 1][j] == 9) contor++;
+			if (matrice[i - 1][j + 1] == 9) contor++;
+			if (matrice[i][j - 1] == 9) contor++;
 			if (matrice[i][j] == 9) continue;
-			if (matrice[i][j+1] == 9) contor++;
-			if (matrice[i + 1][j-1] == 9) contor++;
+			if (matrice[i][j + 1] == 9) contor++;
+			if (matrice[i + 1][j - 1] == 9) contor++;
 			if (matrice[i + 1][j] == 9) contor++;
-			if (matrice[i + 1][j+1] == 9) contor++;
+			if (matrice[i + 1][j + 1] == 9) contor++;
 			matrice[i][j] = contor;
-			
+
 
 		}
 
@@ -129,11 +143,13 @@ void BFS(int a, int b)
 	Sprite s(t);
 
 
-	std::cout <<"Nr. steaguri:"<< nrSteaguri << endl;
+	std::cout << "Nr. steaguri:" << nrSteaguri << endl;
 	while (joc.isOpen())
 	{
 		while (faza == Game)
-		{
+
+		{   
+			
 			Vector2i pozitie = Mouse::getPosition(joc);
 			int x = pozitie.x / pixel;
 			int y = pozitie.y / pixel;
@@ -145,26 +161,32 @@ void BFS(int a, int b)
 			{
 
 				if (e.type == sf::Event::Closed)
+				{
 					joc.close();
+					muzica.stop();
+				}
 
 				if (e.type == Event::MouseButtonPressed)
 				{
 
-					if (e.key.code == Mouse::Left && afisare[x][y] != 11)
+					if (e.key.code == Mouse::Left && afisare[x][y] != 11 && pozitieValida(x,y)!=0)
 					{
 						afisare[x][y] = matrice[x][y];
 
 						if (matrice[x][y] == 9)
 						{
 							muzica.stop();
+							explozie.play();
 							std::cout << "BUM!" << endl;
-							for (int i = 3; i <= 32; i++)
-								for (int j = 3; j <= 32; j++)
-									if (matrice[i][j] != 9 || afisare[i][j] != 11)
-										afisare[i][j] = matrice[i][j];
+							
+							
+							for (int i = start_x; i <= final_x; i++)
+								for (int j = start_y; j <= final_y; j++)
+								if (matrice[i][j] != 9 || afisare[i][j] != 11)
+									afisare[i][j] = matrice[i][j];
 							//joc.close(); 
 						}
-						std::cout << x - 2 << " " << y - 2 << endl;;
+						std::cout << x - 2 << " " << y - 2 <<" "<<pozitieValida(x,y)<<endl;
 						if (matrice[x][y] == 0 && pozitieValida(x, y))  BFS(x, y);
 
 					}
@@ -187,7 +209,7 @@ void BFS(int a, int b)
 							}
 						}
 					}
-					else { std::cout << "Ai ramas fara steaguri!:("; joc.close(); }
+					else { std::cout << "Ai ramas fara steaguri!:(";/* joc.close();*/ }
 
 
 				}
@@ -197,8 +219,8 @@ void BFS(int a, int b)
 
 			joc.clear(Color(100, 0, 0, 255));
 
-			for (int i = 3; i < 32; i++)
-				for (int j = 3; j <= 32; j++)
+			for (int i = start_x; i <= final_x; i++)
+				for (int j = start_y; j <= final_y; j++)
 				{
 
 					s.setTextureRect(IntRect(pixel*afisare[i][j], 0, pixel, pixel));
