@@ -11,15 +11,16 @@ int pixel = 32;
 int matrice[40][40];
 int afisare[40][40];
 int vizitat[40][40];
+
 int contor;
 int nrSteaguri = 0;
 int coada_x[1000];
 int coada_y[1000];
-int nrMaximBombe = 100;
+int nrMaximBombe = 10;
 int contorAfisate;
 
-int size_x = 30;
-int size_y = 16;
+int size_x = 9;
+int size_y = 9;
 int start_x = (36 - size_x) / 2;
 int final_x = start_x + size_x - 1;
 int start_y = (36 - size_y) / 2;
@@ -44,10 +45,11 @@ void setBoard()
 		{
 			bomba_x = std::rand() % size_x;
 			bomba_y = std::rand() % size_y;
-		} while (matrice[start_x+bomba_x-1][start_y+bomba_y-1]==9);
+		} while (matrice[start_x+bomba_x][start_y+bomba_y]==9);
 		
 		++nrSteaguri;
-		matrice[start_x+bomba_x-1][start_y+bomba_y-1]=9;
+		matrice[start_x+bomba_x][start_y+bomba_y]=9;
+		cout << "B:" <<bomba_x+1 << " " << bomba_y +1<< endl;
 	}
 	
 	for (int i = start_x; i <= final_x; i++)
@@ -88,7 +90,7 @@ void BFS(int a, int b)
 	coada_x[prim] = a;
 	coada_y[prim] = b;
 	vizitat[a][b] = 1;
-	std::cout << "prim: " << coada_x[prim] - 2 << " " << coada_y[prim] - 2 << " " << vizitat[coada_x[prim]][coada_y[prim]] << endl;
+	std::cout << "prim: " << coada_x[prim] - start_x+1 << " " << coada_y[prim] - start_y+1<< " " << vizitat[coada_x[prim]][coada_y[prim]] << endl;
 	while (prim <= ultim)
 	{
 
@@ -153,6 +155,11 @@ int main()
 
 	Music explozie;
 	explozie.openFromFile("exploding.ogg");
+	
+	Music win;
+	win.openFromFile("salam.ogg");
+
+
 
 
 	
@@ -201,7 +208,7 @@ int main()
 	gameOver.loadFromFile("GameOver.png");
 	Sprite sgameOver;
 	sgameOver.setTexture(gameOver);
-	sgameOver.setPosition(400, 500);
+	sgameOver.setPosition(400, 200);
 	sgameOver.setScale(0.4, 0.4);
 
 	
@@ -289,7 +296,7 @@ int main()
 				if (e.type == Event::MouseButtonPressed)
 				{
 
-					if (e.key.code == Mouse::Left && afisare[x][y] != 11 && pozitieValida(x, y) != 0 && ok==1)
+					if (e.key.code == Mouse::Left && afisare[x][y] != 11 && pozitieValida(x, y) != 0 && ok==1 && won==0)
 					{
 						afisare[x][y] = matrice[x][y];
 
@@ -311,14 +318,14 @@ int main()
 							//joc.close(); 
 							//faza = GameOver;
 						}
-						std::cout << x - 2 << " " << y - 2 << " " << pozitieValida(x, y) << endl;
+						std::cout <<x<<" "<<y<<" "<< x - start_x+1 << " " << y - start_y+1 << " " << pozitieValida(x, y) << endl;
 						if (matrice[x][y] == 0 && pozitieValida(x, y))  BFS(x, y);
 
 					}
 
 					if (nrSteaguri > 0)
 					{
-						if (e.key.code == Mouse::Right && ok == 1)
+						if (e.key.code == Mouse::Right && ok == 1 && won==0)
 						{
 							if (afisare[x][y] == 10)
 							{
@@ -358,7 +365,15 @@ int main()
 
 				}
 
-
+			won = 1;
+			for (int i = start_x; i <= final_x; i++)
+				for (int j = start_y; j <= final_y; j++)
+					if (afisare[i][j] == 10)
+						won = 0;
+			if (won == 1 && ok == 1)
+			{
+				nrSteaguri = 1998;
+			}
 			joc.draw(nrSteaguriText);
 			joc.display();
 		}
