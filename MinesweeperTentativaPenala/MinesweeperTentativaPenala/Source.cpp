@@ -2,6 +2,7 @@
 #include <SFML/Audio.hpp>
 #include <ctime>
 #include <iostream>
+#include <sstream>
 #define vecin coada_x[prim] + deplasare_x[i]][coada_y[prim] + deplasare_y[i]
 using namespace sf;
 using namespace std;
@@ -18,12 +19,13 @@ int nrMaximBombe = 200;
 int contorAfisate;
 
 int size_x = 30;
-int size_y = 16;
+int size_y = 30;
 int start_x = (36 - size_x) / 2;
 int final_x = start_x + size_x - 1;
 int start_y = (36 - size_y) / 2;
 int final_y = start_y + size_y - 1;
 bool won;
+bool ok = 1;
 
 bool pozitieValida(int a, int b)
 {
@@ -75,7 +77,7 @@ void BFS(int a, int b)
 bool ispressed = false;
 int main()
 {
-	cout << start_x << " " << final_x << " "<<start_y << " " << final_y;
+	cout << start_x << " " << final_x << " " << start_y << " " << final_y;
 	enum FazaJoc
 	{
 		Menu,
@@ -89,7 +91,7 @@ int main()
 	//stii care e faza?:)
 
 
-    Image icon;
+	Image icon;
 	icon.loadFromFile("icon.png");
 	icon.createMaskFromColor(Color::White);
 
@@ -139,6 +141,16 @@ int main()
 
 		}
 
+	Text nrSteaguriText;
+	Font font;
+	font.loadFromFile("font.ttf");
+	nrSteaguriText.setFont(font);
+	nrSteaguriText.setFillColor(Color::White);
+	nrSteaguriText.setPosition(200, 1060);
+	nrSteaguriText.setCharacterSize(60);
+	
+	
+	
 	Texture t;
 	t.loadFromFile("images/tiles.jpg");
 	Sprite s(t);
@@ -146,12 +158,13 @@ int main()
 	Texture titlu;
 	titlu.loadFromFile("images/title.png");
 	Sprite stitlu;
-	stitlu.setTexture(titlu);	
+	stitlu.setTexture(titlu);
 	stitlu.setPosition(195, 100);
 
 	Texture tplay, tplay1;
 	tplay.loadFromFile("play.png");
 	tplay1.loadFromFile("play1.png");
+	
 	Sprite splay;
 	splay.setTexture(tplay);
 	splay.setPosition(415, 460);
@@ -166,10 +179,17 @@ int main()
 	mina.loadFromFile("icon.png");
 	Sprite smina;
 	smina.setTexture(mina);
-	smina.setPosition(340,460);
+	smina.setPosition(340, 460);
 	smina.setScale(0.25, 0.25);
 
+	Texture gameOver;
+	gameOver.loadFromFile("GameOver.png");
+	Sprite sgameOver;
+	sgameOver.setTexture(gameOver);
+	sgameOver.setPosition(400, 500);
+	sgameOver.setScale(0.4, 0.4);
 
+	
 	std::cout << "Nr. steaguri:" << nrSteaguri << endl;
 	while (joc.isOpen())
 	{
@@ -181,24 +201,24 @@ int main()
 			joc.draw(stitlu);
 			joc.draw(splay);
 			Vector2i pozitie = Mouse::getPosition(joc);
-			
-			if (splay.getGlobalBounds().contains(pozitie.x, pozitie.y)) 
+
+			if (splay.getGlobalBounds().contains(pozitie.x, pozitie.y))
 			{
-				
+
 				joc.draw(smina);
 			}
 			joc.display();
 			sf::Event e;
 			while (joc.pollEvent(e))
 			{
-				
+
 
 				if (e.type == sf::Event::Closed)
 				{
 					joc.close();
 					muzica.stop();
 				}
-				
+
 
 				if (e.type == sf::Event::MouseButtonPressed)
 					if (e.key.code == Mouse::Left)
@@ -213,16 +233,22 @@ int main()
 							ispressed = false;
 							splay.setTexture(tplay);
 							faza = Game;
-			}
+						}
 			}
 
-        }
-		
-		
+		}
+
+
 
 		while (faza == Game)
 
-		{   
+		{
+			
+			stringstream nrSteaguriString;
+			nrSteaguriString << to_string(nrSteaguri);
+			nrSteaguriText.setString(nrSteaguriString.str());
+			
+			
 			muzica.setVolume(50);
 
 			Vector2i pozitie = Mouse::getPosition(joc);
@@ -244,7 +270,7 @@ int main()
 				if (e.type == Event::MouseButtonPressed)
 				{
 
-					if (e.key.code == Mouse::Left && afisare[x][y] != 11 && pozitieValida(x,y)!=0)
+					if (e.key.code == Mouse::Left && afisare[x][y] != 11 && pozitieValida(x, y) != 0 && ok==1)
 					{
 						afisare[x][y] = matrice[x][y];
 
@@ -253,24 +279,27 @@ int main()
 							muzica.stop();
 							explozie.play();
 							std::cout << "BUM!" << endl;
+							ok = 0;
 							
 							
+
+
 							for (int i = start_x; i <= final_x; i++)
 								for (int j = start_y; j <= final_y; j++)
-								if (matrice[i][j] != 9 || afisare[i][j] != 11)
-									afisare[i][j] = matrice[i][j];
-							
+									if (matrice[i][j] != 9 || afisare[i][j] != 11)
+										afisare[i][j] = matrice[i][j];
+
 							//joc.close(); 
 							//faza = GameOver;
 						}
-						std::cout << x - 2 << " " << y - 2 <<" "<<pozitieValida(x,y)<<endl;
+						std::cout << x - 2 << " " << y - 2 << " " << pozitieValida(x, y) << endl;
 						if (matrice[x][y] == 0 && pozitieValida(x, y))  BFS(x, y);
 
 					}
 
 					if (nrSteaguri > 0)
 					{
-						if (e.key.code == Mouse::Right)
+						if (e.key.code == Mouse::Right && ok == 1)
 						{
 							if (afisare[x][y] == 10)
 							{
@@ -303,7 +332,15 @@ int main()
 					s.setTextureRect(IntRect(pixel*afisare[i][j], 0, pixel, pixel));
 					s.setPosition(i*pixel, j*pixel);
 					joc.draw(s);
+					
+					if (ok == 0)
+						joc.draw(sgameOver);
+
+
 				}
+
+
+			joc.draw(nrSteaguriText);
 			joc.display();
 		}
 	}
