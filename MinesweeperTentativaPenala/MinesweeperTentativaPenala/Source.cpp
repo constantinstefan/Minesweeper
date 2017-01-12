@@ -15,17 +15,61 @@ int contor;
 int nrSteaguri = 0;
 int coada_x[1000];
 int coada_y[1000];
-int nrMaximBombe = 200;
+int nrMaximBombe = 100;
 int contorAfisate;
 
 int size_x = 30;
-int size_y = 30;
+int size_y = 16;
 int start_x = (36 - size_x) / 2;
 int final_x = start_x + size_x - 1;
 int start_y = (36 - size_y) / 2;
 int final_y = start_y + size_y - 1;
-bool won;
+bool won = 0;
 bool ok = 1;
+int bomba_x;
+int bomba_y;
+
+void setBoard()
+{
+	for (int i = start_x; i <= final_x; i++)
+		for (int j = start_y; j <= final_y; j++)
+		{
+			afisare[i][j] = 10;
+			matrice[i][j] = 0;
+		}
+	
+	for (int i = 1; i <= nrMaximBombe; i++)
+	{
+		do
+		{
+			bomba_x = std::rand() % size_x;
+			bomba_y = std::rand() % size_y;
+		} while (matrice[start_x+bomba_x-1][start_y+bomba_y-1]==9);
+		
+		++nrSteaguri;
+		matrice[start_x+bomba_x-1][start_y+bomba_y-1]=9;
+	}
+	
+	for (int i = start_x; i <= final_x; i++)
+		for (int j = start_y; j <= final_y; j++)
+		{
+			contor = 0;
+			if (matrice[i - 1][j - 1] == 9) contor++;
+			if (matrice[i - 1][j] == 9) contor++;
+			if (matrice[i - 1][j + 1] == 9) contor++;
+			if (matrice[i][j - 1] == 9) contor++;
+			if (matrice[i][j] == 9) continue;
+			if (matrice[i][j + 1] == 9) contor++;
+			if (matrice[i + 1][j - 1] == 9) contor++;
+			if (matrice[i + 1][j] == 9) contor++;
+			if (matrice[i + 1][j + 1] == 9) contor++;
+			matrice[i][j] = contor;
+
+
+		}
+
+}
+
 
 bool pozitieValida(int a, int b)
 {
@@ -77,6 +121,8 @@ void BFS(int a, int b)
 bool ispressed = false;
 int main()
 {
+	std::srand(time(0));
+
 	cout << start_x << " " << final_x << " " << start_y << " " << final_y;
 	enum FazaJoc
 	{
@@ -95,7 +141,7 @@ int main()
 	icon.loadFromFile("icon.png");
 	icon.createMaskFromColor(Color::White);
 
-	std::srand(time(0));
+	
 
 	sf::RenderWindow joc(sf::VideoMode(1156, 1156), "Minesweeper");
 	joc.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
@@ -109,38 +155,7 @@ int main()
 	explozie.openFromFile("exploding.ogg");
 
 
-	for (int i = start_x; i <= final_x; i++)
-		for (int j = start_y; j <= final_y; j++)
-		{
-			afisare[i][j] = 10;
-
-			if (rand() % 5 == 0 && nrMaximBombe>0)
-			{
-				matrice[i][j] = 9;
-				++nrSteaguri;
-				--nrMaximBombe;
-			}
-			else matrice[i][j] = 0;
-		}
-
-	for (int i = start_x; i <= final_x; i++)
-		for (int j = start_y; j <= final_y; j++)
-		{
-			contor = 0;
-			if (matrice[i - 1][j - 1] == 9) contor++;
-			if (matrice[i - 1][j] == 9) contor++;
-			if (matrice[i - 1][j + 1] == 9) contor++;
-			if (matrice[i][j - 1] == 9) contor++;
-			if (matrice[i][j] == 9) continue;
-			if (matrice[i][j + 1] == 9) contor++;
-			if (matrice[i + 1][j - 1] == 9) contor++;
-			if (matrice[i + 1][j] == 9) contor++;
-			if (matrice[i + 1][j + 1] == 9) contor++;
-			matrice[i][j] = contor;
-
-
-		}
-
+	
 	Text nrSteaguriText;
 	Font font;
 	font.loadFromFile("font.ttf");
@@ -232,6 +247,7 @@ int main()
 						{
 							ispressed = false;
 							splay.setTexture(tplay);
+							setBoard();
 							faza = Game;
 						}
 			}
@@ -244,6 +260,9 @@ int main()
 
 		{
 			
+
+
+
 			stringstream nrSteaguriString;
 			nrSteaguriString << to_string(nrSteaguri);
 			nrSteaguriText.setString(nrSteaguriString.str());
