@@ -159,9 +159,6 @@ int main()
 	Music win;
 	win.openFromFile("salam.ogg");
 
-
-
-
 	
 	Text nrSteaguriText;
 	Font font;
@@ -171,7 +168,16 @@ int main()
 	nrSteaguriText.setPosition(200, 1060);
 	nrSteaguriText.setCharacterSize(60);
 	
-	
+	Text timpText;
+	timpText.setFont(font);
+	timpText.setPosition(800, 1060);
+	timpText.setFillColor(Color::White);
+	timpText.setCharacterSize(60);
+    
+	Clock ceas;
+	Time timp;
+	int secunde;
+
 	
 	Texture t;
 	t.loadFromFile("images/tiles.jpg");
@@ -255,6 +261,7 @@ int main()
 							ispressed = false;
 							splay.setTexture(tplay);
 							setBoard();
+							ceas.restart();
 							faza = Game;
 						}
 			}
@@ -274,7 +281,16 @@ int main()
 			nrSteaguriString << to_string(nrSteaguri);
 			nrSteaguriText.setString(nrSteaguriString.str());
 			
-			
+			if (ok == 1 && won==0) {
+				stringstream secundeString;
+				timp = ceas.getElapsedTime();
+				secunde = timp.asSeconds();
+				secundeString << to_string(secunde);
+				timpText.setString(secundeString.str());
+			}
+
+
+
 			muzica.setVolume(50);
 
 			Vector2i pozitie = Mouse::getPosition(joc);
@@ -359,9 +375,10 @@ int main()
 					s.setPosition(i*pixel, j*pixel);
 					joc.draw(s);
 					
-					if (ok == 0)
+					if (ok == 0) {
 						joc.draw(sgameOver);
 
+					}
 
 				}
 
@@ -375,6 +392,7 @@ int main()
 				nrSteaguri = 1998;
 			}
 			joc.draw(nrSteaguriText);
+			joc.draw(timpText);
 			joc.display();
 		}
 	}
