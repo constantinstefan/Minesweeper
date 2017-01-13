@@ -1,6 +1,11 @@
 ﻿  Source.cpp
-c:\users\cosmin\documents\visual studio 2015\projects\minesweepertentativapenala\minesweepertentativapenala\source.cpp(42): warning C4390: ';': empty controlled statement found; is this the intent?
-c:\users\cosmin\documents\visual studio 2015\projects\minesweepertentativapenala\minesweepertentativapenala\source.cpp(63): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-c:\users\cosmin\documents\visual studio 2015\projects\minesweepertentativapenala\minesweepertentativapenala\source.cpp(177): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-  MinesweeperTentativaPenala.vcxproj -> C:\Users\Cosmin\Documents\Visual Studio 2015\Projects\MinesweeperTentativaPenala\Debug\MinesweeperTentativaPenala.exe
-  MinesweeperTentativaPenala.vcxproj -> C:\Users\Cosmin\Documents\Visual Studio 2015\Projects\MinesweeperTentativaPenala\Debug\MinesweeperTentativaPenala.pdb (Full PDB)
+c:\users\cosmin\documents\visual studio 2015\projects\minesweepertentativapenala\minesweepertentativapenala\source.cpp(194): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+c:\users\cosmin\documents\visual studio 2015\projects\minesweepertentativapenala\minesweepertentativapenala\source.cpp(332): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\cosmin\documents\visual studio 2015\projects\minesweepertentativapenala\minesweepertentativapenala\source.cpp(347): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\cosmin\documents\visual studio 2015\projects\minesweepertentativapenala\minesweepertentativapenala\source.cpp(356): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\cosmin\documents\visual studio 2015\projects\minesweepertentativapenala\minesweepertentativapenala\source.cpp(376): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\cosmin\documents\visual studio 2015\projects\minesweepertentativapenala\minesweepertentativapenala\source.cpp(414): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\cosmin\documents\visual studio 2015\projects\minesweepertentativapenala\minesweepertentativapenala\source.cpp(527): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\cosmin\documents\visual studio 2015\projects\minesweepertentativapenala\minesweepertentativapenala\source.cpp(546): warning C4390: ';': empty controlled statement found; is this the intent?
+  MinesweeperTentativaPenala.vcxproj -> C:\Users\Cosmin\documents\visual studio 2015\Projects\MinesweeperTentativaPenala\Debug\MinesweeperTentativaPenala.exe
+  MinesweeperTentativaPenala.vcxproj -> C:\Users\Cosmin\documents\visual studio 2015\Projects\MinesweeperTentativaPenala\Debug\MinesweeperTentativaPenala.pdb (Full PDB)

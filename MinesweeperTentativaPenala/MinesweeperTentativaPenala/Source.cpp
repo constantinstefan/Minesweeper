@@ -212,7 +212,7 @@ int main()
 
 
 	Image icon;
-	icon.loadFromFile("icon.png");
+	icon.loadFromFile("images/icon.png");
 	icon.createMaskFromColor(Color::White);
 
 	
@@ -221,20 +221,19 @@ int main()
 	joc.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
 
 	Music muzica;
-	muzica.openFromFile("TurnDownForWhat2.ogg");
+	muzica.openFromFile("music/TurnDownForWhat2.ogg");
 	muzica.play();
 	muzica.setLoop(true);
 
 	Music explozie;
-	explozie.openFromFile("exploding.ogg");
+	explozie.openFromFile("music/exploding.ogg");
 	
-	Music win;
-	win.openFromFile("salam.ogg");
+	
 
 	
 	Text nrSteaguriText;
 	Font font;
-	font.loadFromFile("font.ttf");
+	font.loadFromFile("fonts/font.ttf");
 	nrSteaguriText.setFont(font);
 	nrSteaguriText.setFillColor(Color::White);
 	nrSteaguriText.setPosition(200, 1060);
@@ -248,7 +247,7 @@ int main()
 
 	Text pressBackspaceText;
 	Font digital;
-	digital.loadFromFile("digital.ttf");
+	digital.loadFromFile("fonts/digital.ttf");
 	pressBackspaceText.setFont(digital);
 	pressBackspaceText.setFillColor(Color::White);
 	pressBackspaceText.setPosition(300, 900);
@@ -284,8 +283,8 @@ int main()
 	stitlu.setPosition(195, 100);
 
 	Texture tplay, tplay1;
-	tplay.loadFromFile("play.png");
-	tplay1.loadFromFile("play1.png");
+	tplay.loadFromFile("images/play.png");
+	tplay1.loadFromFile("images/play1.png");
 	
 	Sprite splay;
 	splay.setTexture(tplay);
@@ -298,36 +297,36 @@ int main()
 	sbackground.setPosition(0, 0);
 
 	Texture backgroundimages[4];
-	backgroundimages[0].loadFromFile("b1.jpg");
-	backgroundimages[1].loadFromFile("b2.jpg");
-	backgroundimages[2].loadFromFile("b3.jpg");
-	backgroundimages[3].loadFromFile("b4.jpg");
+	backgroundimages[0].loadFromFile("images/b1.jpg");
+	backgroundimages[1].loadFromFile("images/b2.jpg");
+	backgroundimages[2].loadFromFile("images/b3.jpg");
+	backgroundimages[3].loadFromFile("images/b4.jpg");
 	Sprite sbg;
 	
 	
 	Texture mina;
-	mina.loadFromFile("icon.png");
+	mina.loadFromFile("images/icon.png");
 	Sprite smina;
 	smina.setTexture(mina);
 	smina.setPosition(340, 460);
 	smina.setScale(0.25, 0.25);
 
 	Texture gameOver;
-	gameOver.loadFromFile("GameOver.png");
+	gameOver.loadFromFile("images/GameOver.png");
 	Sprite sgameOver;
 	sgameOver.setTexture(gameOver);
 	sgameOver.setPosition(475, 100);
 	sgameOver.setScale(0.25, 0.25);
 
 	Texture flagIcon;
-	flagIcon.loadFromFile("flagIcon.png");
+	flagIcon.loadFromFile("images/flagIcon.png");
 	Sprite sflagIcon;
 	sflagIcon.setTexture(flagIcon);
 	sflagIcon.setPosition(135, 1060);
 	sflagIcon.setScale(0.5, 0.5);
 
 	Texture timer;
-	timer.loadFromFile("timer.png");
+	timer.loadFromFile("images/timer.png");
 	Sprite stimer;
 	stimer.setTexture(timer);
 	stimer.setScale(0.15, 0.15);
@@ -444,7 +443,7 @@ int main()
 					
 					faza = Menu;
 					muzica.play();
-					win.stop();
+					
 				}
 				if (e.type == Event::MouseButtonPressed)
 				{
