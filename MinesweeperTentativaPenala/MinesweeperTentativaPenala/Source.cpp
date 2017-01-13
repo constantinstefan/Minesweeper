@@ -3,6 +3,8 @@
 #include <ctime>
 #include <iostream>
 #include <sstream>
+#include <fstream>
+
 #define vecin coada_x[prim] + deplasare_x[i]][coada_y[prim] + deplasare_y[i]
 using namespace sf;
 using namespace std;
@@ -29,6 +31,8 @@ bool won = 0;
 bool ok = 1;
 int bomba_x;
 int bomba_y;
+int bestTime;
+int odata = 0;
 
 void setBoard()
 {
@@ -134,7 +138,11 @@ int main()
 		GameOver,
 		BestTime
 	};
-
+	fstream f("HighScore.txt");
+	f.open("HighScore.txt");
+	f >> bestTime;
+	f.close();
+	
 	FazaJoc faza = Menu;
 	//stii care e faza?:)
 
@@ -149,7 +157,7 @@ int main()
 	joc.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
 
 	Music muzica;
-	muzica.openFromFile("TurnDownForWhat2.ogg");
+	muzica.openFromFile("salam.ogg");
 	muzica.play();
 	muzica.setLoop(true);
 
@@ -261,7 +269,7 @@ int main()
 							ispressed = false;
 							splay.setTexture(tplay);
 							setBoard();
-							ceas.restart();
+							
 							faza = Game;
 						}
 			}
@@ -275,31 +283,36 @@ int main()
 		{
 			
 
-
-
 			stringstream nrSteaguriString;
 			nrSteaguriString << to_string(nrSteaguri);
 			nrSteaguriText.setString(nrSteaguriString.str());
+
+			
 			
 			if (ok == 1 && won==0) {
 				stringstream secundeString;
 				timp = ceas.getElapsedTime();
+				
+				if (odata == 0)
+					secunde = 0;
+				else
 				secunde = timp.asSeconds();
+
 				secundeString << to_string(secunde);
 				timpText.setString(secundeString.str());
 			}
 
 
 
-			muzica.setVolume(50);
+			muzica.setVolume(40);
 
 			Vector2i pozitie = Mouse::getPosition(joc);
 			int x = pozitie.x / pixel;
 			int y = pozitie.y / pixel;
 
+            sf::Event e;
+	
 
-
-			sf::Event e;
 			while (joc.pollEvent(e))
 			{
 
@@ -308,12 +321,18 @@ int main()
 					joc.close();
 					muzica.stop();
 				}
-
+			
 				if (e.type == Event::MouseButtonPressed)
 				{
 
 					if (e.key.code == Mouse::Left && afisare[x][y] != 11 && pozitieValida(x, y) != 0 && ok==1 && won==0)
 					{
+						if (odata == 0)
+						{
+							ceas.restart();
+							odata++;
+						}
+						
 						afisare[x][y] = matrice[x][y];
 
 						if (matrice[x][y] == 9)
@@ -343,6 +362,12 @@ int main()
 					{
 						if (e.key.code == Mouse::Right && ok == 1 && won==0)
 						{
+							if (odata == 0)
+							{
+								ceas.restart();
+								odata++;
+							}
+
 							if (afisare[x][y] == 10)
 							{
 								afisare[x][y] = 11;
@@ -390,11 +415,23 @@ int main()
 			if (won == 1 && ok == 1)
 			{
 				nrSteaguri = 1998;
+				
+				if (bestTime > secunde);
+				{
+					f.open("HighScore.txt",ios::out | ios::trunc);
+					bestTime = secunde;
+					f << bestTime;
+					f.close();
+				}
+			
 			}
 			joc.draw(nrSteaguriText);
+			
+			
 			joc.draw(timpText);
 			joc.display();
-		}
+			
+}
 	}
 	return 0;
 }
