@@ -18,11 +18,11 @@ int contor;
 int nrSteaguri = 0;
 int coada_x[1000];
 int coada_y[1000];
-int nrMaximBombe = 10;
+int nrMaximBombe = 100;
 int contorAfisate;
 
-int size_x = 9;
-int size_y = 9;
+int size_x = 30;
+int size_y = 16;
 int start_x = (36 - size_x) / 2;
 int final_x = start_x + size_x - 1;
 int start_y = (36 - size_y) / 2;
@@ -33,6 +33,30 @@ int bomba_x;
 int bomba_y;
 int bestTime;
 int odata = 0;
+int flicker = 0;
+int flicker2 = 0;
+
+void reset()
+
+{
+	
+	for (int i = 0; i <= 39; i++)
+		for (int j = 0; j < 39; j++)
+			vizitat[i][j] = 0;
+	
+
+	nrSteaguri = 0;
+	
+
+	 won = 0;
+	 ok = 1;
+	odata = 0;
+	flicker = 0;
+	flicker2 = 0;
+
+
+}
+
 void setBoardxy(int x,int y)
 {
 	for (int i = start_x; i <= final_x; i++)
@@ -221,7 +245,25 @@ int main()
 	timpText.setPosition(800, 1060);
 	timpText.setFillColor(Color::White);
 	timpText.setCharacterSize(60);
+
+	Text pressBackspaceText;
+	Font digital;
+	digital.loadFromFile("digital.ttf");
+	pressBackspaceText.setFont(digital);
+	pressBackspaceText.setFillColor(Color::White);
+	pressBackspaceText.setPosition(300, 900);
+	pressBackspaceText.setCharacterSize(30);
+	string pressBackspaceString = "PRESS BACKSPACE TO RETURN TO MAIN MENU";
+	pressBackspaceText.setString(pressBackspaceString);
     
+	Text congratulationsText;
+	congratulationsText.setFont(digital);
+	congratulationsText.setFillColor(Color::White);
+	congratulationsText.setPosition(450, 850);
+	congratulationsText.setCharacterSize(30);
+	string congratulationsString = "CONGRATULATIONS";
+	congratulationsText.setString(congratulationsString);
+
 	Clock ceas;
 	Time timp;
 	int secunde;
@@ -274,8 +316,25 @@ int main()
 	gameOver.loadFromFile("GameOver.png");
 	Sprite sgameOver;
 	sgameOver.setTexture(gameOver);
-	sgameOver.setPosition(450, 100);
+	sgameOver.setPosition(475, 100);
 	sgameOver.setScale(0.25, 0.25);
+
+	Texture flagIcon;
+	flagIcon.loadFromFile("flagIcon.png");
+	Sprite sflagIcon;
+	sflagIcon.setTexture(flagIcon);
+	sflagIcon.setPosition(135, 1060);
+	sflagIcon.setScale(0.5, 0.5);
+
+	Texture timer;
+	timer.loadFromFile("timer.png");
+	Sprite stimer;
+	stimer.setTexture(timer);
+	stimer.setScale(0.15, 0.15);
+	stimer.setPosition(700, 1060);
+
+
+	
 
 	
 	std::cout << "Nr. steaguri:" << nrSteaguri << endl;
@@ -283,7 +342,8 @@ int main()
 	{
 		faza = Menu;
 		while (faza == Menu)
-		{
+		{   
+			
 			timpMeniu = ceasMeniu.getElapsedTime();
 			secundeMeniu = timpMeniu.asSeconds();
 			sbg.setTexture(backgroundimages[secundeMeniu % 4]);
@@ -377,7 +437,15 @@ int main()
 					joc.close();
 					muzica.stop();
 				}
-			
+				if (e.type == Event::KeyPressed)
+				if(e.key.code==Keyboard::BackSpace)
+				{
+					reset();
+					
+					faza = Menu;
+					muzica.play();
+					win.stop();
+				}
 				if (e.type == Event::MouseButtonPressed)
 				{
 
@@ -400,6 +468,7 @@ int main()
 							ok = 0;
 							
 							
+                            
 
 
 							for (int i = start_x; i <= final_x; i++)
@@ -466,14 +535,14 @@ int main()
 
 				}
 
-			won = 1;
+			   won = 1;
 			for (int i = start_x; i <= final_x; i++)
 				for (int j = start_y; j <= final_y; j++)
 					if (afisare[i][j] == 10)
 						won = 0;
-			if (won == 1 && ok == 1)
+			if (won == 1)
 			{
-				nrSteaguri = 1998;
+				//
 				
 				if (bestTime > secunde);
 				{
@@ -484,8 +553,39 @@ int main()
 				}
 			
 			}
-			joc.draw(nrSteaguriText);
 			
+			
+		
+
+			if (ok == 0 || won==1)
+			{
+				if (flicker < 50)
+				{
+					joc.draw(pressBackspaceText);
+					flicker++;
+				}
+				if ( flicker < 100)
+					flicker++;
+				else
+					flicker = 0;
+
+			}
+			if (won == 1 && ok==1)
+			{
+				if (flicker2 < 50)
+				{
+					joc.draw(congratulationsText);
+					flicker2++;
+				}
+				if (flicker2 < 100)
+					flicker2++;
+				else
+					flicker2 = 0;
+
+			}
+			joc.draw(nrSteaguriText);
+			joc.draw(sflagIcon);
+			joc.draw(stimer);
 			
 			joc.draw(timpText);
 			joc.display();
