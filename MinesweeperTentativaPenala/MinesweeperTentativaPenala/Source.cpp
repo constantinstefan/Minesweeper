@@ -33,7 +33,47 @@ int bomba_x;
 int bomba_y;
 int bestTime;
 int odata = 0;
+void setBoardxy(int x,int y)
+{
+	for (int i = start_x; i <= final_x; i++)
+		for (int j = start_y; j <= final_y; j++)
+		{
+			afisare[i][j] = 10;
+			matrice[i][j] = 0;
+		}
 
+	for (int i = 1; i <= nrMaximBombe; i++)
+	{
+		do
+		{
+			bomba_x = std::rand() % size_x;
+			bomba_y = std::rand() % size_y;
+		} while (matrice[start_x + bomba_x][start_y + bomba_y] == 9||(start_x + bomba_x==x && start_y + bomba_y==y));
+
+		//++nrSteaguri;
+		matrice[start_x + bomba_x][start_y + bomba_y] = 9;
+		cout << "B:" << bomba_x + 1 << " " << bomba_y + 1 << endl;
+	}
+
+	for (int i = start_x; i <= final_x; i++)
+		for (int j = start_y; j <= final_y; j++)
+		{
+			contor = 0;
+			if (matrice[i - 1][j - 1] == 9) contor++;
+			if (matrice[i - 1][j] == 9) contor++;
+			if (matrice[i - 1][j + 1] == 9) contor++;
+			if (matrice[i][j - 1] == 9) contor++;
+			if (matrice[i][j] == 9) continue;
+			if (matrice[i][j + 1] == 9) contor++;
+			if (matrice[i + 1][j - 1] == 9) contor++;
+			if (matrice[i + 1][j] == 9) contor++;
+			if (matrice[i + 1][j + 1] == 9) contor++;
+			matrice[i][j] = contor;
+
+
+		}
+
+}
 void setBoard()
 {
 	for (int i = start_x; i <= final_x; i++)
@@ -53,7 +93,7 @@ void setBoard()
 		
 		++nrSteaguri;
 		matrice[start_x+bomba_x][start_y+bomba_y]=9;
-		cout << "B:" <<bomba_x+1 << " " << bomba_y +1<< endl;
+		//cout << "B:" <<bomba_x+1 << " " << bomba_y +1<< endl;
 	}
 	
 	for (int i = start_x; i <= final_x; i++)
@@ -157,7 +197,7 @@ int main()
 	joc.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
 
 	Music muzica;
-	muzica.openFromFile("salam.ogg");
+	muzica.openFromFile("TurnDownForWhat2.ogg");
 	muzica.play();
 	muzica.setLoop(true);
 
@@ -185,7 +225,11 @@ int main()
 	Clock ceas;
 	Time timp;
 	int secunde;
-
+	
+	Clock ceasMeniu;
+	Time timpMeniu;
+	int secundeMeniu;
+	
 	
 	Texture t;
 	t.loadFromFile("images/tiles.jpg");
@@ -211,6 +255,14 @@ int main()
 	sbackground.setTexture(background);
 	sbackground.setPosition(0, 0);
 
+	Texture backgroundimages[4];
+	backgroundimages[0].loadFromFile("b1.jpg");
+	backgroundimages[1].loadFromFile("b2.jpg");
+	backgroundimages[2].loadFromFile("b3.jpg");
+	backgroundimages[3].loadFromFile("b4.jpg");
+	Sprite sbg;
+	
+	
 	Texture mina;
 	mina.loadFromFile("icon.png");
 	Sprite smina;
@@ -222,8 +274,8 @@ int main()
 	gameOver.loadFromFile("GameOver.png");
 	Sprite sgameOver;
 	sgameOver.setTexture(gameOver);
-	sgameOver.setPosition(400, 200);
-	sgameOver.setScale(0.4, 0.4);
+	sgameOver.setPosition(450, 100);
+	sgameOver.setScale(0.25, 0.25);
 
 	
 	std::cout << "Nr. steaguri:" << nrSteaguri << endl;
@@ -232,8 +284,12 @@ int main()
 		faza = Menu;
 		while (faza == Menu)
 		{
+			timpMeniu = ceasMeniu.getElapsedTime();
+			secundeMeniu = timpMeniu.asSeconds();
+			sbg.setTexture(backgroundimages[secundeMeniu % 4]);
+
 			joc.clear();
-			joc.draw(sbackground);
+			joc.draw(sbg);
 			joc.draw(stitlu);
 			joc.draw(splay);
 			Vector2i pozitie = Mouse::getPosition(joc);
@@ -329,6 +385,7 @@ int main()
 					{
 						if (odata == 0)
 						{
+							setBoardxy(x, y);
 							ceas.restart();
 							odata++;
 						}
@@ -347,8 +404,9 @@ int main()
 
 							for (int i = start_x; i <= final_x; i++)
 								for (int j = start_y; j <= final_y; j++)
-									if (matrice[i][j] != 9 || afisare[i][j] != 11)
+								if (matrice[i][j] != 9 || afisare[i][j] != 11)
 										afisare[i][j] = matrice[i][j];
+							     
 
 							//joc.close(); 
 							//faza = GameOver;
@@ -364,6 +422,7 @@ int main()
 						{
 							if (odata == 0)
 							{
+								//setBoardxy(x, y);
 								ceas.restart();
 								odata++;
 							}
